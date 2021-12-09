@@ -4,7 +4,7 @@ import ActionSheet from "react-native-actions-sheet";
 import { OptimizedFlatList } from 'react-native-optimized-flatlist';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as MediaLibrary from 'expo-media-library';
-import { Platform } from 'expo-modules-core';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Audio } from 'expo-av';
 import styles from './styles';
 
@@ -24,7 +24,6 @@ function Home() {
     useEffect(() => {
 
         const reqPermission = async () => {
-            // console.log('requesting permission...', index)
 
             await Audio.setAudioModeAsync({
                 allowsRecordingIOS: true,
@@ -36,7 +35,6 @@ function Home() {
             if (status === 'granted') fetchFiles()
             if (status !== 'granted') { await MediaLibrary.requestPermissionsAsync() }
 
-            // console.log(status)
         }
 
         reqPermission()
@@ -83,7 +81,6 @@ function Home() {
             <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                 <View style={{ backgroundColor: '#2c2c2e88', width: 50, height: 50, justifyContent: 'center', alignItems: 'center', borderRadius: 5 }}>
                     <Icon name='ios-musical-notes-sharp' size={26} color={file.index === index ? '#d43859' : '#2c2c2e'} />
-                    {/* <Text style={{ fontSize: 20, color: '#d43859' }}>{file.item.filename.split('')[0]}</Text> */}
                 </View>
 
                 <View style={{ height: 20, width: 20 }} />
@@ -188,7 +185,6 @@ function Home() {
             {
                 isPlaying ? (
                     <View
-                        // onPress={() => showPlaying()}
                         style={{
                             backgroundColor: '#2c2c2e',
                             padding: 10,
@@ -233,7 +229,7 @@ function Home() {
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             flexDirection: 'row',
-                            backgroundColor: 'red'
+
                         }}>
 
                         </View>
@@ -263,73 +259,74 @@ function Home() {
 
             <ActionSheet
                 gestureEnabled={true}
-                defaultOverlayOpacity={0}
                 elevation={0}
                 ref={playingTrackRef}
                 closable={true}
-                indicatorColor={'#000000'}
-                containerStyle={{
-                    height: Dimensions.get('window').height,
-                    padding: 30,
-                    backgroundColor: '#000',
-                    paddingTop: 30,
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexDirection: 'column',
-                    // backgroundColor: 'red'
-                }}>
+                indicatorColor={'#ffffff44'}
+                containerStyle={{ backgroundColor: '#8b5d4d', paddingTop: 10 }}>
 
-                <View style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}>
-                    <View style={{
-                        backgroundColor: '#242424',
-                        // width: Dimensions.get('window').width - 50,
-                        // height: Dimensions.get('window').height / 3,
-                        width: 230,
-                        height: 230,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: 10
+                <LinearGradient
+                    colors={['#8b5d4d', '#85624f', '#593a38']}
+                    style={{
+                        height: Dimensions.get('window').height,
+                        padding: 30,
+                        paddingTop: 10,
+                        backgroundColor: '#8b5d4d',
                     }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 30, color: '#d43859' }}>{currentPlayingFile.filename.split('')[0]}</Text>
+                    <View
+
+                        style={{
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            paddingTop: 30,
+                        }}>
+                        <View style={{
+                            backgroundColor: '#242424',
+                            width: 230,
+                            height: 230,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 10
+                        }}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 30, color: '#d43859' }}>{currentPlayingFile.filename.split('')[0]}</Text>
+                        </View>
                     </View>
-                </View>
 
-                <View style={{ height: 30, width: 30 }} />
-                <Text style={{ fontSize: 20, textAlign: 'center', color: '#fff' }}>{currentPlayingFile.filename}</Text>
-                {/* <View style={{ height: 30, width: 30 }} /> */}
-                <View style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    justifyContent: 'space-between',
-                    flexDirection: 'row',
-                    height: Dimensions.get('window').height / 3,
-                    paddingHorizontal: 30,
-                    // backgroundColor: 'red',
-                    width: Dimensions.get('window').width
-                }}>
-                    <TouchableOpacity onPress={() => playPrev()}>
-                        <Icon name="play-back" color='#fff' size={29} />
-                    </TouchableOpacity>
-                    <View style={{ width: 10, height: 10 }} />
+                    <View style={{ height: 30, width: 30 }} />
 
-                    {
-                        isPaused ?
-                            <TouchableOpacity onPress={() => unPause()}>
-                                <Icon name="play" color='#fff' size={29} />
+                    <View style={{ height: 50 }}>
+                        <Text style={{ fontSize: 20, textAlign: 'center', color: '#fff' }}>{currentPlayingFile.filename}</Text>
+                    </View>
+
+                    <View style={styles.flexCenter}>
+                        <View style={[styles.flexEvenly, {
+                            height: Dimensions.get('window').height / 3,
+                            paddingHorizontal: 30,
+                            width: Dimensions.get('window').width / 2 + 200,
+
+                        }]}>
+                            <TouchableOpacity onPress={() => playPrev()}>
+                                <Icon name="play-back" color='#fff' size={29} />
                             </TouchableOpacity>
-                            : <TouchableOpacity onPress={() => pause()}>
-                                <Icon name="pause" color='#fff' size={29} />
-                            </TouchableOpacity>
-                    }
-                    <View style={{ width: 10, height: 10 }} />
+                            <View style={{ width: 10, height: 10 }} />
 
-                    <TouchableOpacity onPress={() => playNext()}>
-                        <Icon name="play-forward" color='#fff' size={29} />
-                    </TouchableOpacity>
-                </View>
+                            {
+                                isPaused ?
+                                    <TouchableOpacity onPress={() => unPause()}>
+                                        <Icon name="play" color='#fff' size={29} />
+                                    </TouchableOpacity>
+                                    : <TouchableOpacity onPress={() => pause()}>
+                                        <Icon name="pause" color='#fff' size={29} />
+                                    </TouchableOpacity>
+                            }
+                            <View style={{ width: 10, height: 10 }} />
+
+                            <TouchableOpacity onPress={() => playNext()}>
+                                <Icon name="play-forward" color='#fff' size={29} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </LinearGradient>
 
             </ActionSheet>
         </View>
