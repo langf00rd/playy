@@ -1,16 +1,20 @@
-import React, { useState, useEffect, createRef } from 'react';
+import React, { useState, useRef, useEffect, createRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, StatusBar, FlatList, ScrollView, Dimensions, Alert } from 'react-native';
-import ActionSheet from "react-native-actions-sheet";
+// import ActionSheet from "react-native-actions-sheet";
 import { OptimizedFlatList } from 'react-native-optimized-flatlist';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as MediaLibrary from 'expo-media-library';
 import { LinearGradient } from 'expo-linear-gradient';
+import RBSheet from "react-native-raw-bottom-sheet";
 import { Audio } from 'expo-av';
 import styles from './styles';
 
 function Home() {
 
-    const playingTrackRef = createRef()
+    // const playingTrackRef = createRef()
+    const refRBSheet = useRef();
+
+
     const [files, setFiles] = useState([])
     const [index, setindex] = useState(0)
     const [soundInstance, setsoundInstance] = useState(null)
@@ -130,7 +134,9 @@ function Home() {
     }
 
     const showPlaying = () => {
-        playingTrackRef.current?.setModalVisible()
+        refRBSheet.current.open()
+        // playingTrackRef.current?.setModalVisible()
+        // refRBSheet.current.open()
     }
 
     const playNext = () => {
@@ -164,7 +170,7 @@ function Home() {
             </View>
 
             <View style={[styles.flexBetween, { paddingHorizontal: 20, paddingBottom: 10 }]}>
-                <TouchableOpacity style={[styles.btn, styles.flexEvenly]}>
+                <TouchableOpacity style={[styles.btn, styles.flexEvenly]} onPress={() => refRBSheet.current.open()}>
                     <Icon name='play' size={25} color='#d43859' />
                     <Text style={{ color: '#d43859' }}>Play</Text>
                 </TouchableOpacity>
@@ -257,79 +263,97 @@ function Home() {
                     : <View></View>
             }
 
-            <ActionSheet
-                gestureEnabled={true}
-                elevation={0}
-                ref={playingTrackRef}
-                closable={true}
-                indicatorColor={'#ffffff44'}
-                containerStyle={{ backgroundColor: '#8b5d4d', paddingTop: 10 }}>
 
-                <LinearGradient
-                    colors={['#8b5d4d', '#85624f', '#593a38']}
-                    style={{
-                        height: Dimensions.get('window').height,
-                        padding: 30,
-                        paddingTop: 10,
-                        backgroundColor: '#8b5d4d',
-                    }}>
-                    <View
+            <ScrollView>
+                <RBSheet
+                    ref={refRBSheet}
+                    closeOnDragDown={false}
+                    animationType={'slide'}
+                    closeOnPressMask={true}
+                    height={Dimensions.get('window').height}
+                    customStyles={{
+                        wrapper: { backgroundColor: "transparent" },
+                        container: { borderRadius: 10, },
+                        draggableIcon: { backgroundColor: "red" }
+                    }} >
 
+                    <LinearGradient
+                        colors={['#8b5d4d', '#85624f', '#593a38']}
                         style={{
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            paddingTop: 30,
+                            height: Dimensions.get('window').height,
+                            padding: 30,
+                            paddingTop: 10,
+                            backgroundColor: '#8b5d4d',
                         }}>
-                        <View style={{
-                            backgroundColor: '#242424',
-                            width: 230,
-                            height: 230,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: 10
-                        }}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 30, color: '#d43859' }}>{currentPlayingFile.filename.split('')[0]}</Text>
-                        </View>
-                    </View>
-
-                    <View style={{ height: 30, width: 30 }} />
-
-                    <View style={{ height: 50 }}>
-                        <Text style={{ fontSize: 20, textAlign: 'center', color: '#fff' }}>{currentPlayingFile.filename}</Text>
-                    </View>
-
-                    <View style={styles.flexCenter}>
-                        <View style={[styles.flexEvenly, {
-                            height: Dimensions.get('window').height / 3,
-                            paddingHorizontal: 30,
-                            width: Dimensions.get('window').width / 2 + 200,
-
-                        }]}>
-                            <TouchableOpacity onPress={() => playPrev()}>
-                                <Icon name="play-back" color='#fff' size={29} />
+                        <View style={styles.flexBetween}>
+                            <TouchableOpacity onPress={() => refRBSheet.current.close()}>
+                                <Icon name='ios-chevron-down-sharp' size={29} color='#fff' />
                             </TouchableOpacity>
-                            <View style={{ width: 10, height: 10 }} />
-
-                            {
-                                isPaused ?
-                                    <TouchableOpacity onPress={() => unPause()}>
-                                        <Icon name="play" color='#fff' size={29} />
-                                    </TouchableOpacity>
-                                    : <TouchableOpacity onPress={() => pause()}>
-                                        <Icon name="pause" color='#fff' size={29} />
-                                    </TouchableOpacity>
-                            }
-                            <View style={{ width: 10, height: 10 }} />
-
-                            <TouchableOpacity onPress={() => playNext()}>
-                                <Icon name="play-forward" color='#fff' size={29} />
-                            </TouchableOpacity>
+                            <View></View>
                         </View>
-                    </View>
-                </LinearGradient>
 
-            </ActionSheet>
-        </View>
+                        <View>
+                            <View style={[styles.flex, { paddingTop: 30 }]}>
+
+                                <View style={[styles.flexCenter, {
+                                    backgroundColor: '#242424',
+                                    width: 70,
+                                    height: 70,
+                                    borderRadius: 10
+                                }]}>
+                                    <Text style={{ fontWeight: 'bold', fontSize: 30, color: '#d43859' }}>{currentPlayingFile.filename.split('')[0]}</Text>
+                                </View>
+                                <View style={{ height: 20, width: 20 }} />
+                                <View style={{ paddingRight: 20 }}>
+                                    <Text numberOfLines={2} style={{ fontSize: 18, color: '#fff' }}>{currentPlayingFile.filename}</Text>
+                                </View>
+
+                            </View>
+
+                            <View style={styles.space30} />
+
+                            <View style={styles.flexCenter}>
+                                <View style={[styles.flexBetween, {
+                                    height: 30,
+                                    paddingHorizontal: 30,
+                                    width: Dimensions.get('window').width,
+                                }]}>
+                                    <TouchableOpacity onPress={() => playPrev()}>
+                                        <Icon name="play-back" color='#fff' size={29} />
+                                    </TouchableOpacity>
+                                    <View style={{ width: 10, height: 10 }} />
+
+                                    {
+                                        isPaused ?
+                                            <TouchableOpacity onPress={() => unPause()}>
+                                                <Icon name="play" color='#fff' size={29} />
+                                            </TouchableOpacity>
+                                            : <TouchableOpacity onPress={() => pause()}>
+                                                <Icon name="pause" color='#fff' size={29} />
+                                            </TouchableOpacity>
+                                    }
+                                    <View style={{ width: 10, height: 10 }} />
+
+                                    <TouchableOpacity onPress={() => playNext()}>
+                                        <Icon name="play-forward" color='#fff' size={29} />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+                            <View style={styles.space30} />
+
+                            <View style={{ marginLeft: -20 }}>
+                                <OptimizedFlatList
+                                    data={files}
+                                    renderItem={renderItem}
+                                />
+                            </View>
+
+                        </View>
+                    </LinearGradient>
+                </RBSheet>
+            </ScrollView>
+        </View >
     )
 }
 

@@ -19,6 +19,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
 
+    flex: {
+        alignItems: 'center',
+        flexDirection: 'row'
+    },
+
     flexCenter: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -37,6 +42,11 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         borderRadius: 7,
         width: '48%'
+    },
+
+    space30: {
+        height: 30,
+        width: 30,
     }
 })
 
