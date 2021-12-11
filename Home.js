@@ -165,8 +165,13 @@ function Home() {
 
             <StatusBar backgroundColor="#000" barStyle="light-content" />
 
-            <View style={{ paddingVertical: 15, paddingTop: 0, paddingHorizontal: 20, }}>
-                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#fff' }}>My List</Text>
+            <View style={[styles.flexBetween, { paddingVertical: 15, paddingTop: 0, paddingHorizontal: 20, }]}>
+                <View>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#fff' }}>Songs</Text>
+                </View>
+                <TouchableOpacity>
+                    <Icon name='ios-search-outline' size={27} color='#fff' />
+                </TouchableOpacity>
             </View>
 
             <View style={[styles.flexBetween, { paddingHorizontal: 20, paddingBottom: 10 }]}>
@@ -270,6 +275,9 @@ function Home() {
                     closeOnDragDown={false}
                     animationType={'slide'}
                     closeOnPressMask={true}
+                    minClosingHeight={0}
+                    openDuration={100}
+                    closeDuration={100}
                     height={Dimensions.get('window').height}
                     customStyles={{
                         wrapper: { backgroundColor: "transparent" },
@@ -282,14 +290,17 @@ function Home() {
                         style={{
                             height: Dimensions.get('window').height,
                             padding: 30,
-                            paddingTop: 10,
+                            paddingTop: 20,
                             backgroundColor: '#8b5d4d',
                         }}>
                         <View style={styles.flexBetween}>
                             <TouchableOpacity onPress={() => refRBSheet.current.close()}>
                                 <Icon name='ios-chevron-down-sharp' size={29} color='#fff' />
                             </TouchableOpacity>
-                            <View></View>
+
+                            <TouchableOpacity onPress={() => refRBSheet.current.close()}>
+                                <Icon name='ios-search-outline' size={27} color='#fff' />
+                            </TouchableOpacity>
                         </View>
 
                         <View>
@@ -303,11 +314,29 @@ function Home() {
                                 }]}>
                                     <Text style={{ fontWeight: 'bold', fontSize: 30, color: '#d43859' }}>{currentPlayingFile.filename.split('')[0]}</Text>
                                 </View>
-                                <View style={{ height: 20, width: 20 }} />
-                                <View style={{ paddingRight: 20 }}>
-                                    <Text numberOfLines={2} style={{ fontSize: 18, color: '#fff' }}>{currentPlayingFile.filename}</Text>
+                                <View style={{ height: 10, width: 10 }} />
+                                <View style={{ maxWidth: '80%' }}>
+                                    <Text numberOfLines={2} style={{ color: '#fff' }}>{currentPlayingFile.filename}</Text>
                                 </View>
 
+                            </View>
+
+                            {/* <View style={styles.space30} /> */}
+
+                            <View style={{ height: 20, width: 20 }} />
+
+                            <View style={styles.flexBetween}>
+                                <Text style={{ color: '#fff' }}>Playing now</Text>
+                                <View></View>
+                            </View>
+
+                            <View style={{ height: 20, width: 20 }} />
+
+                            <View style={{ marginLeft: -20, height: Dimensions.get('window').height / 2 + 80 }}>
+                                <OptimizedFlatList
+                                    data={files}
+                                    renderItem={renderItem}
+                                />
                             </View>
 
                             <View style={styles.space30} />
@@ -316,37 +345,30 @@ function Home() {
                                 <View style={[styles.flexBetween, {
                                     height: 30,
                                     paddingHorizontal: 30,
-                                    width: Dimensions.get('window').width,
+                                    width: Dimensions.get('window').width - 100,
                                 }]}>
                                     <TouchableOpacity onPress={() => playPrev()}>
                                         <Icon name="play-back" color='#fff' size={29} />
                                     </TouchableOpacity>
                                     <View style={{ width: 10, height: 10 }} />
 
-                                    {
-                                        isPaused ?
-                                            <TouchableOpacity onPress={() => unPause()}>
-                                                <Icon name="play" color='#fff' size={29} />
-                                            </TouchableOpacity>
-                                            : <TouchableOpacity onPress={() => pause()}>
-                                                <Icon name="pause" color='#fff' size={29} />
-                                            </TouchableOpacity>
-                                    }
+                                    <View style={[styles.flexCenter, { width: 50, height: 50, borderRadius: 100, backgroundColor: '#fff' }]}>
+                                        {
+                                            isPaused ?
+                                                <TouchableOpacity onPress={() => unPause()} style={{ paddingLeft: 3 }}>
+                                                    <Icon name="play" color='#000' size={29} />
+                                                </TouchableOpacity>
+                                                : <TouchableOpacity onPress={() => pause()}>
+                                                    <Icon name="pause" color='#000' size={29} />
+                                                </TouchableOpacity>
+                                        }
+                                    </View>
                                     <View style={{ width: 10, height: 10 }} />
 
                                     <TouchableOpacity onPress={() => playNext()}>
                                         <Icon name="play-forward" color='#fff' size={29} />
                                     </TouchableOpacity>
                                 </View>
-                            </View>
-
-                            <View style={styles.space30} />
-
-                            <View style={{ marginLeft: -20 }}>
-                                <OptimizedFlatList
-                                    data={files}
-                                    renderItem={renderItem}
-                                />
                             </View>
 
                         </View>
